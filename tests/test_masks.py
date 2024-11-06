@@ -1,5 +1,6 @@
 import pytest
-from src.masks import get_mask_card_number, get_mask_account
+
+from src.masks import get_mask_account, get_mask_card_number
 
 
 @pytest.mark.parametrize("card_number, expected", [
@@ -9,7 +10,8 @@ from src.masks import get_mask_card_number, get_mask_account
     ("12", "12"),      # Ожидаем, что 2 символа не будут замаскированы
     ("", ""),          # Ожидаем пустую строку
 ])
-def test_get_mask_card_number(card_number, expected):
+def test_get_mask_card_number(card_number: str, expected: str) -> None:
+    """Функция для тестирования номера карты"""
     assert get_mask_card_number(card_number) == expected
 
 
@@ -19,5 +21,6 @@ def test_get_mask_card_number(card_number, expected):
     ("12", "12"),  # Ожидаем, что 2 символа не будут замаскированы
     ("", ""),          # Ожидаем пустую строку
 ])
-def test_get_mask_account(account_number, expected):
+def test_get_mask_account(account_number: str, expected: str) -> None:
+    """Функция для тестирования номера аккаунта"""
     assert get_mask_account(account_number) == expected
