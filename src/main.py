@@ -2,6 +2,7 @@ from src.generators import card_number_generator, filter_by_currency, transactio
 from src.masks import get_mask_account, get_mask_card_number
 from src.processing import filter_by_state, sort_by_date
 
+
 transactions = [
     {
         "id": 939719570,

@@ -46,6 +46,7 @@ nosetests.xml
 .hypothesis/
 .pytest_cache/
 cover/
+htmlcov
 
 # Translations
 *.mo
