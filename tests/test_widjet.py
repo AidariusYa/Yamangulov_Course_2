@@ -1,4 +1,5 @@
 import pytest
+
 from src.widjet import get_date, mask_account_card
 
 
