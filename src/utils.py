@@ -5,6 +5,9 @@ import os
 # Получаем абсолютный путь до текущей директории
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
+# Путь к папке data
+data_dir = os.path.join(current_dir, "..", "data")
+
 # Создаем путь до файла логов относительно текущей директории
 log_dir = os.path.join(current_dir, "../logs")
 if not os.path.exists(log_dir):
@@ -54,5 +57,5 @@ def read_json_file(file_path):
 
 
 if __name__ == "__main__":
-    transactions = read_json_file(os.path.join(current_dir, "data/operations.json"))
+    transactions = read_json_file(os.path.join(data_dir, "operations.json"))
     print(transactions)

@@ -4,8 +4,17 @@ import os
 
 import pandas as pd
 
-# Получаем абсолютный путь до текущей директории
+
+# Получаем путь к директории проекта
 current_dir = os.path.dirname(os.path.abspath(__file__))
+
+# Путь к папке data
+data_dir = os.path.join(current_dir, "..", "data")
+
+# Пример чтения файла
+csv_file_path = os.path.join(data_dir, "transactions.csv")
+xlsx_file_path = os.path.join(data_dir, "transactions_excel.xlsx")
+
 
 # Создаем путь до файла логов относительно текущей директории
 log_dir = os.path.join(current_dir, "../logs")
@@ -66,7 +75,7 @@ def read_transactions_from_excel(file_path):
 
 
 if __name__ == "__main__":
-    transactions_csv = read_transactions_from_csv(os.path.join(current_dir, "data/transactions.csv"))
-    transactions_excel = read_transactions_from_csv(os.path.join(current_dir, "data/transactions_excel.xlsx"))
+    transactions_csv = read_transactions_from_csv(csv_file_path)
+    transactions_excel = read_transactions_from_excel(xlsx_file_path)
     print(transactions_csv)
     print(transactions_excel)
