@@ -3,7 +3,7 @@ import os
 
 import pandas as pd
 
-from src.masks import get_mask_card_number
+from src.masks import get_mask_card_number, get_mask_account
 from src.processing import filter_by_state, sort_by_date
 from src.search_transactions import search_transactions, sort_transactions
 from src.widjet import get_date
@@ -108,16 +108,27 @@ def main() -> None:
     print(f"Всего банковских операций в выборке: {len(transactions)}")
     for transaction in transactions:
         description = transaction.get("description")
-        from_ = get_mask_card_number(transaction.get("from")) if description != "Открытие вклада" else description
-        to_ = get_mask_card_number(transaction.get("to"))
+        from_card = get_mask_card_number(transaction.get("from"))
+        from_account = get_mask_account(transaction.get("from"))
+        to_card = get_mask_card_number(transaction.get("to"))
+        to_account = get_mask_account(transaction.get("to"))
         date = get_date(transaction.get("date"))
         amount = transaction["operationAmount"]["amount"]
         currency = transaction["operationAmount"]["currency"]["name"]
 
-        if description == "Открытие вклада":
-            print(f"{date} {description}\nСчет {to_}\nСумма: {amount} {currency}\n")
-        else:
-            print(f"{date} {description}\n{from_} -> {to_}\nСумма: {amount} {currency}\n")
+        if description == "Перевод организации":
+            if "Счет" in transaction.get("from"):
+                print(f"{date} {description}\n{from_account} -> {to_account}\nСумма: {amount} {currency}\n")
+            else:
+                print(f"{date} {description}\n{from_card} -> {to_account}\nСумма: {amount} {currency}\n")
+        elif description == "Перевод с карты на карту":
+            print(f"{date} {description}\n{from_card} -> {to_card}\nСумма: {amount} {currency}\n")
+        elif description == "Перевод с карты на счет":
+            print(f"{date} {description}\n{from_card} -> {to_account}\nСумма: {amount} {currency}\n")
+        elif description == "Перевод со счета на счет":
+            print(f"{date} {description}\n{from_account} -> {to_account}\nСумма: {amount} {currency}\n")
+        elif description == "Открытие вклада":
+            print(f"{date} {description}\n{to_account}\nСумма: {amount} {currency}\n")
 
     # Подсчет транзакций по категориям
     categories_operations = [

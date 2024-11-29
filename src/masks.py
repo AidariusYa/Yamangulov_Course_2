@@ -1,5 +1,6 @@
 import logging
 import os
+import re
 
 # Получаем абсолютный путь до текущей директории
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -24,17 +25,30 @@ file_handler.setFormatter(file_formatter)
 logger.addHandler(file_handler)
 
 
-def get_mask_card_number(card_number: str) -> str:
+def get_mask_card_number(card_info: str) -> str:
     """Возвращает замаскированный номер банковской карты в формате XXXX XX** **** XXXX"""
     logger.debug("Маскируем карту клиента")
     try:
+        # Используем регулярное выражение для разделения на буквы и цифры
+        match = re.search(r"([a-zA-Zа-яА-ЯёЁ\s]+)(\d+)", card_info)
+
+        if not match:
+            return "Нет данных о карте"
+
+        letters = match.group(1).strip()  # Буквы
+        card_number = match.group(2)  # Цифры
+
         if len(card_number) <= 4:
-            return card_number  # Возвращает номер без изменений, если он меньше или равен 4 символам
+            masked_number = card_number  # Возвращает номер без изменений, если он меньше или равен 4 символам
         elif len(card_number) < 6:
-            return f"{card_number[:4]}**"  # Если длина 5, показывает 4 и маскирует остальные
-        return f"{card_number[:4]} {card_number[4:6]}** **** {card_number[-4:]}"  # Стандартный вариант
+            masked_number = f"{card_number[:4]}**"  # Если длина 5, показывает 4 и маскирует остальные
+        else:
+            masked_number = f"{card_number[:4]} {card_number[4:6]}** **** {card_number[-4:]}"  # Стандартный вариант
+
+        return f"{letters} {masked_number}"
     except Exception as e:
         logger.error("Произошла ошибка: %s", e)
+        return "Ошибка при маскировке номера карты"
     finally:
         logger.info("Функция выполнена успешно")
 
@@ -43,17 +57,14 @@ def get_mask_account(account_number: str) -> str:
     """Возвращает замаскированный номер банковского счета в формате **XXXX"""
     logger.debug("Маскируем счёт клиента")
     try:
-        if len(account_number) < 4:  # Возвращает номер без изменений, если он меньше 4 символов
-            return account_number
+        if not account_number:
+            return "Нет данных о счете"
+        elif len(account_number) <= 3:  # Возвращает номер без изменений, если он меньше 4 символов
+            return f"Счет {account_number}"
         elif len(account_number) == 4:
-            return f"**{account_number[-2:]}"
-        return f"**{account_number[-4:]}"
+            return f"Счет **{account_number[-2:]}"
+        return f"Счет **{account_number[-4:]}"
     except Exception as e:
         logger.error("Произошла ошибка: %s", e)
     finally:
         logger.info("Функция выполнена успешно")
-
-
-if __name__ == "__main__":
-    print(get_mask_card_number("1234567890123456"))
-    print(get_mask_account("12345678901234567890"))
